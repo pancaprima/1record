@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/css/styles.css">
+    <title>1Record</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light hidden">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div id="intro">
+      <p id="title"> 1Record </p>
+      <p id="subtitle"> by Fernanda Panca Prima </p>
+      <div class="form-group">
+        <input class="form-control" type="text" name="url" value="" placeholder="let's go to your website page, bro">
+      </div>
+      <button id="goto" type="submit" class="btn btn-outline-warning .btn-lg">Let's Go</button>
+    </div>
+    <a id="close" href="javascript:window.close()">Close Program</a>
+
+    <script src="./assets/js/jquery-3.2.1.min.js" onload="window.$ = window.jQuery = module.exports;"></script>
+    <script src="./assets/bootstrap/js/bootstrap.bundle.min.js" onload="window.$ = window.bootstrap = module.exports;"></script>
+    <script>
+      // You can also require other files to run in this process
+      require('./renderer.js')
+    </script>
+  </body>
+</html>
