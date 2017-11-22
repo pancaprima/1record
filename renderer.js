@@ -6,4 +6,5 @@ $('#goto').on('click', (e) => {
   e.preventDefault()
   $('#intro').hide()
   $('nav').show()
+  $('#browser').show()
 })

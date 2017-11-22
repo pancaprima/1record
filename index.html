@@ -7,20 +7,6 @@
     <title>1Record</title>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light hidden">
-      <a class="navbar-brand" href="#">Navbar</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-          </li>
-        </ul>
-      </div>
-    </nav>
     <div id="intro">
       <p id="title"> 1Record </p>
       <p id="subtitle"> by Fernanda Panca Prima </p>
@@ -29,12 +15,18 @@
       </div>
       <button id="goto" type="submit" class="btn btn-outline-warning .btn-lg">Let's Go</button>
     </div>
-    <a id="close" href="javascript:window.close()">Close Program</a>
-
+    <webview id="browser" src="https://tokopedia.com" class="hidden" autosize minwidth="576" minheight="432"></webview>
+    <div id="navigation">
+      <ul>
+        <li id="inspect">Inspect</li>
+        <li id="close" href="javascript:window.close()">Close Program</li>
+      </ul>
+    </div>
     <script src="./assets/js/jquery-3.2.1.min.js" onload="window.$ = window.jQuery = module.exports;"></script>
     <script src="./assets/bootstrap/js/bootstrap.bundle.min.js" onload="window.$ = window.bootstrap = module.exports;"></script>
     <script>
       // You can also require other files to run in this process
+      require('./inspector.js')
       require('./renderer.js')
     </script>
   </body>
