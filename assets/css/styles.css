@@ -45,9 +45,18 @@ body {
 
 #navigation ul li {
   float:left;
-  font-size: 12px;
-  text-decoration: none;
+  font-size: 13px;
   margin: 5px 10px;
+}
+
+a {
+  color:white;
+  text-decoration: none;
+}
+
+a:hover {
+  color:#ffc107;
+  text-decoration: none;
 }
 
 #browser {

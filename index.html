@@ -11,15 +11,14 @@
       <p id="title"> 1Record </p>
       <p id="subtitle"> by Fernanda Panca Prima </p>
       <div class="form-group">
-        <input class="form-control" type="text" name="url" value="" placeholder="let's go to your website page, bro">
+        <input id="url" class="form-control" type="text" value="" placeholder="let's go to your website page, bro">
       </div>
       <button id="goto" type="submit" class="btn btn-outline-warning .btn-lg">Let's Go</button>
     </div>
-    <webview id="browser" src="https://tokopedia.com" class="hidden" autosize minwidth="576" minheight="432"></webview>
+    <webview id="browser" src="#" preload="./preload.js" class="hidden" autosize minwidth="576" minheight="432"></webview>
     <div id="navigation">
-      <ul>
-        <li id="inspect">Inspect</li>
-        <li id="close" href="javascript:window.close()">Close Program</li>
+      <ul style="float:right">
+        <li><a id="close" href="javascript:window.close()">Close Program</a></li>
       </ul>
     </div>
     <script src="./assets/js/jquery-3.2.1.min.js" onload="window.$ = window.jQuery = module.exports;"></script>

@@ -28,18 +28,18 @@
 
 
 var last;
-  
+var page;
+
 /**
- * Get full CSS path of any element
- * 
- * Returns a jQuery-style CSS path, with IDs, classes and ':nth-child' pseudo-selectors.
- * 
- * Can either build a full CSS path, from 'html' all the way to ':nth-child()', or a
- * more optimised short path, stopping at the first parent with a specific ID,
- * eg. "#content .top p" instead of "html body #main #content .top p:nth-child(3)"
- */
+* Get full CSS path of any element
+* 
+* Returns a jQuery-style CSS path, with IDs, classes and ':nth-child' pseudo-selectors.
+* 
+* Can either build a full CSS path, from 'html' all the way to ':nth-child()', or a
+* more optimised short path, stopping at the first parent with a specific ID,
+* eg. "#content .top p" instead of "html body #main #content .top p:nth-child(3)"
+*/
 function cssPath(el) {
-  console.log(el)
   var fullPath    = 0,  // Set to 1 to build ultra-specific full CSS-path, or 0 for optimised selector
       useNthChild = 0,  // Set to 1 to use ":nth-child()" pseudo-selectors to match the given element
       cssPathStr = '',
@@ -54,7 +54,7 @@ function cssPath(el) {
       nth,
       i,
       c;
-  
+
   // Go up the list of parent nodes and build unique identifier for each:
   while ( el ) {
     vagueMatch = 0;
@@ -89,11 +89,11 @@ function cssPath(el) {
       break;
     
     // Go up to the next parent node:
-    el = el.parentNode !== document ? el.parentNode : false;
+    el = el.parentNode !== page ? el.parentNode : false;
     
   } // endwhile
-  
-  
+
+
   // Build the CSS path string from the parent tag selectors:
   for ( i = 0; i < parentSelectors.length; i++ ) {
     cssPathStr += ' ' + parentSelectors[i];// + ' ' + cssPathStr;
@@ -113,30 +113,30 @@ function cssPath(el) {
     }
     
   }
-  
+
   // Return trimmed full CSS path:
   return cssPathStr.replace(/^[ \t]+|[ \t]+$/, '');
 }
 
 
 /**
- * MouseOver action for all elements on the page:
- */
+* MouseOver action for all elements on the page:
+*/
 function inspectorMouseOver(e) {
   // NB: this doesn't work in IE (needs fix):
   var element = e.target;
-  
+
   // Set outline:
-  element.style.outline = '2px solid #f00';
-  
+  element.style.outline = '3px solid #563d7c';
+
   // Set last selected element so it can be 'deselected' on cancel.
   last = element;
 }
 
 
 /**
- * MouseOut event action for all elements
- */
+* MouseOut event action for all elements
+*/
 function inspectorMouseOut(e) {
   // Remove outline from element:
   e.target.style.outline = '';
@@ -144,53 +144,26 @@ function inspectorMouseOut(e) {
 
 
 /**
- * Click action for hovered element
- */
+* Click action for hovered element
+*/
 function inspectorOnClick(e) {
   e.preventDefault();
-  
-  // These are the default actions (the XPath code might be a bit janky)
-  // Really, these could do anything:
-  console.log( cssPath(e.target) );
-  /* console.log( getXPath(e.target).join('/') ); */
-  
-  return false;
+
+  return cssPath(e.target);
 }
 
 
 /**
- * Function to cancel inspector:
- */
-function inspectorCancel(e) {
+* Function to cancel inspector:
+*/
+function inspectorCancel() {
   // Unbind inspector mouse and click events:
-  if (e === null && event.keyCode === 27) { // IE (won't work yet):
-    document.detachEvent("mouseover", inspectorMouseOver);
-    document.detachEvent("mouseout", inspectorMouseOut);
-    document.detachEvent("click", inspectorOnClick);
-    document.detachEvent("keydown", inspectorCancel);
-    last.style.outlineStyle = 'none';
-  } else if(e.which === 27) { // Better browsers:
-    document.removeEventListener("mouseover", inspectorMouseOver, true);
-    document.removeEventListener("mouseout", inspectorMouseOut, true);
-    document.removeEventListener("click", inspectorOnClick, true);
-    document.removeEventListener("keydown", inspectorCancel, true);
-    
-    // Remove outline on last-selected element:
-    last.style.outline = 'none';
-  }
+  page = null
+  last.style.outline = 'none'
 }
 
-$('#inspect').on('click', (e) => {
-  e.preventDefault()
-  if ( document.addEventListener ) {
-    document.addEventListener("mouseover", inspectorMouseOver, true);
-    document.addEventListener("mouseout", inspectorMouseOut, true);
-    document.addEventListener("click", inspectorOnClick, true);
-    document.addEventListener("keydown", inspectorCancel, true);
-  } else if ( document.attachEvent ) {
-    document.attachEvent("mouseover", inspectorMouseOver);
-    document.attachEvent("mouseout", inspectorMouseOut);
-    document.attachEvent("click", inspectorOnClick);
-    document.attachEvent("keydown", inspectorCancel);
-  }
-})
+function inspectorStart(doc) {
+  page = doc
+}
+
+module.exports = { inspectorMouseOver, inspectorMouseOut, inspectorOnClick, inspectorCancel, inspectorStart};
