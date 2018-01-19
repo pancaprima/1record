@@ -25,7 +25,7 @@ function unbindListener(event) {
 }
 
 function inspectorOnClick(event) {
-  e.preventDefault()
+  event.preventDefault()
   let location = inspector.inspectorOnClick(event)
   ipc.sendTo(1,'webview-clicked', { 'location':location })
   return false

@@ -11,6 +11,7 @@ $('#goto').on('click', (e) => {
   
   $('#browser').attr('src', $('#url').val())
   $('#browser').show()
+  $('#browser')[0].openDevTools()
 })
 
 ipc.on('webview-clicked', (event, args) => {
@@ -18,6 +19,6 @@ ipc.on('webview-clicked', (event, args) => {
 })
 
 ipc.on('webview-hovered', (event, args) => {
-  console.log('hovered', args.location)
+  // console.log('hovered', args.location)
 })
 

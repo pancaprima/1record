@@ -40,12 +40,15 @@ var page;
 * eg. "#content .top p" instead of "html body #main #content .top p:nth-child(3)"
 */
 function cssPath(el) {
-  var fullPath    = 0,  // Set to 1 to build ultra-specific full CSS-path, or 0 for optimised selector
+  let fullPath    = 0,  // Set to 1 to build ultra-specific full CSS-path, or 0 for optimised selector
       useNthChild = 0,  // Set to 1 to use ":nth-child()" pseudo-selectors to match the given element
+      specialAttributes = ['name', 'href', 'value'],
+      currentElement = el,
       cssPathStr = '',
       testPath = '',
       parents = [],
       parentSelectors = [],
+      attributes = [],
       tagName,
       cssId,
       cssClass,
@@ -56,48 +59,75 @@ function cssPath(el) {
       c;
 
   // Go up the list of parent nodes and build unique identifier for each:
-  while ( el ) {
+  while ( currentElement ) {
     vagueMatch = 0;
 
     // Get the node's HTML tag name in lowercase:
-    tagName = el.nodeName.toLowerCase();
+    tagName = currentElement.nodeName.toLowerCase();
     
     // Get node's ID attribute, adding a '#':
-    cssId = ( el.id ) ? ( '#' + el.id ) : false;
+    cssId = ( currentElement.id ) ? ( '#' + currentElement.id ) : false;
     
     // Get node's CSS classes, replacing spaces with '.':
-    cssClass = ( el.className ) ? ( '.' + el.className.replace(/\s+/g,".") ) : '';
+    cssClass = ( currentElement.className ) ? ( '.' + currentElement.className.replace(/\s+/g,".") ) : '';
+    
+    // Get special attributes from this node
+    let hasSpecialAttribute = false
+    let elementSpecialAttributes = []
+    for (let i in specialAttributes) {
+      let attrValue
+      if ( attrValue = currentElement.getAttribute(specialAttributes[i]) ) { 
+        elementSpecialAttributes.push({ 
+          'name' : specialAttributes[i],
+          'value': attrValue
+        })
+        hasSpecialAttribute = true
+      }
+    }
 
-    // Build a unique identifier for this parent node:
+    // Try build a unique identifier for this parent node by ID
     if ( cssId ) {
       // Matched by ID:
       tagSelector = tagName + cssId + cssClass;
     } else if ( cssClass ) {
-      // Matched by class (will be checked for multiples afterwards):
       tagSelector = tagName + cssClass;
     } else {
-      // Couldn't match by ID or class, so use ":nth-child()" instead:
-      vagueMatch = 1;
-      tagSelector = tagName;
+      vagueMatch = 1
+      tagSelector = tagName
     }
-    
+
+    // Try build a unique identifier for this parent node by attributes
+    let specialAttributesVague = 1
+    if ( hasSpecialAttribute ) {
+      result = checkWithAttributes(currentElement, tagName, tagSelector, elementSpecialAttributes)
+      vagueMatch = result.vague
+      specialAttributesVague = result.vague
+      tagSelector = result.tagSelector
+    }
+
+    if (tagName == "a") {
+      parentSelectors = []
+      el = currentElement
+    }
+
     // Add this full tag selector to the parentSelectors array:
-    parentSelectors.unshift( tagSelector )
+    parentSelectors.push( tagSelector )
 
     // If doing short/optimised CSS paths and this element has an ID, stop here:
     if ( cssId && !fullPath )
       break;
     
     // Go up to the next parent node:
-    el = el.parentNode !== page ? el.parentNode : false;
+    currentElement = currentElement.parentNode !== page ? currentElement.parentNode : false;
     
   } // endwhile
 
-
   // Build the CSS path string from the parent tag selectors:
+  let minimumValidSelector = ''
+  let finalCssPath = ''
   for ( i = 0; i < parentSelectors.length; i++ ) {
-    cssPathStr += ' ' + parentSelectors[i];// + ' ' + cssPathStr;
-    
+    cssPathStr = parentSelectors[i] + ' ' + cssPathStr;// + ' ' + cssPathStr;
+
     // If using ":nth-child()" selectors and this selector has no ID / isn't the html or body tag:
     if ( useNthChild && !parentSelectors[i].match(/#/) && !parentSelectors[i].match(/^(html|body)$/) ) {
       
@@ -105,17 +135,50 @@ function cssPath(el) {
       if ( !parentSelectors[i].match(/\./) || $( cssPathStr ).length > 1 ) {
         
         // Count element's previous siblings for ":nth-child" pseudo-selector:
-        for ( nth = 1, c = el; c.previousElementSibling; c = c.previousElementSibling, nth++ );
+        for ( nth = 1, c = currentElement; c.previousElementSibling; c = c.previousElementSibling, nth++ );
         
         // Append ":nth-child()" to CSS path:
         cssPathStr += ":nth-child(" + nth + ")";
       }
     }
-    
+    finalCssPath = cssPathStr.replace(/^[ \t]+|[ \t]+$/, '')
+    if (el.isSameNode(document.querySelector(finalCssPath))) {
+      if (minimumValidSelector == '') minimumValidSelector = finalCssPath
+      if (document.querySelectorAll(finalCssPath).length == 1) {
+        minimumValidSelector = finalCssPath
+        break
+      }
+    }
   }
+  if (minimumValidSelector == '') console.warn("can't generate selector for this element", el, finalCssPath )
 
-  // Return trimmed full CSS path:
-  return cssPathStr.replace(/^[ \t]+|[ \t]+$/, '');
+  return minimumValidSelector;
+}
+
+function checkWithAttributes (el, tagName, tagSelector, elementSpecialAttributes) {
+  let attrQuery = ''
+  let vague = 1
+  let finalTagSelector = ''
+  let iteratorCounter = (tagName == tagSelector) ? 1 : 2
+  for (let i=0; i < iteratorCounter; i++) {
+    tempTagSelector = (iteratorCounter == 1) ? tagName : tagSelector
+    for (let j in elementSpecialAttributes) {
+      let eAttr = elementSpecialAttributes[j]
+      attrQuery = attrQuery + "[" + eAttr.name + "=" + "'" + eAttr.value + "'" +"]"
+      finalTagSelector = tempTagSelector + attrQuery
+      if ( el.isSameNode(document.querySelector(finalTagSelector)) ) {
+        vague = 0
+        break
+      }
+    }
+    if (!vague) break
+     else finalTagSelector = tagSelector
+  }
+  
+  return {
+    "vague" : vague,
+    "tagSelector" : finalTagSelector
+  }
 }
 
 
