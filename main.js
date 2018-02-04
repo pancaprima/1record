@@ -1,8 +1,12 @@
 const electron = require('electron')
+const electronLocalshortcut = require('electron-localshortcut')
+
 // Module to control application life.
 const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
+const { ipcMain, remote } = require('electron');
+
 
 const path = require('path')
 const url = require('url')
@@ -13,7 +17,13 @@ let mainWindow
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 1366, height: 768, frame: false })
+  mainWindow = new BrowserWindow({
+    width: 1366, 
+    height: 768,
+    "web-preferences": {
+      "web-security": false
+    } 
+  })
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
@@ -32,6 +42,10 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null
+  })
+
+  electronLocalshortcut.register(mainWindow, 'CmdOrCtrl+Alt+F', () => {
+    mainWindow.webContents.send("inspector-shortcut")
   })
 
 }

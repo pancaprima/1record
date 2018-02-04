@@ -1,13 +1,14 @@
 const inspector = require('./inspector');
 const { ipcRenderer: ipc, remote } = require('electron');
 var inspect;
-
-document.addEventListener('DOMContentLoaded', function(event) {
-  inspect = bindListener(event);
-});
+var iframe = {
+  "choosen" : false,
+  "choosing" : false,
+  "location" : ""
+}
 
 function bindListener(event) {
-  inspector.inspectorStart(document)
+  inspector.setPage(document)
   document.addEventListener("mouseover", inspectorMouseOver, true);
   document.addEventListener("mouseout", inspector.inspectorMouseOut, true);
   document.addEventListener('click', inspectorOnClick, true)
@@ -15,13 +16,11 @@ function bindListener(event) {
 }
 
 function unbindListener(event) {
-  if (event.which === 27) {
-    document.removeEventListener("mouseover", inspectorMouseOver, true);
-    document.removeEventListener("mouseout", inspector.inspectorMouseOut, true);
-    document.removeEventListener("click", inspectorOnClick, true);
-    document.removeEventListener("keydown", unbindListener, true);
-    inspector.inspectorCancel()
-  }
+  document.removeEventListener("mouseover", inspectorMouseOver, true);
+  document.removeEventListener("mouseout", inspector.inspectorMouseOut, true);
+  document.removeEventListener("click", inspectorOnClick, true);
+  document.removeEventListener("keydown", unbindListener, true);
+  inspector.inspectorCancel()
 }
 
 function inspectorOnClick(event) {
@@ -36,4 +35,20 @@ function inspectorMouseOver(event) {
   inspector.inspectorMouseOver(event)
   ipc.sendTo(1,'webview-hovered', { 'location':location })
 }
+
+ipc.on('activate-inspector', (event, args) => {
+  inspect = bindListener(event);
+})
+
+ipc.on('deactivate-inspector', (event, args) => {
+  inspect = unbindListener(event);
+})
+
+window.addEventListener('keydown', function (event) {
+  if (event.key == 'Shift') ipc.sendTo(1,'shift-keydown')
+}, true)
+
+window.addEventListener('keyup', function (event) {
+  if (event.key === 'Shift') ipc.sendTo(1,'shift-keyup')
+}, true)
 

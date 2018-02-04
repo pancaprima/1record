@@ -3,25 +3,32 @@
   <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="./assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/css/fontawesome/fontawesome-all.min.css">
     <link rel="stylesheet" href="./assets/css/styles.css">
     <title>1Record</title>
   </head>
   <body>
-    <div id="intro">
-      <p id="title"> 1Record </p>
-      <p id="subtitle"> by Fernanda Panca Prima </p>
+    <div class="intro js-intro">
+      <p class="intro__title"> 1Record </p>
+      <p class="intro__subtitle"> by Fernanda Panca Prima </p>
       <div class="form-group">
-        <input id="url" class="form-control" type="text" value="https://tokopedia.com" placeholder="let's go to your website page, bro">
+        <input class="form-control js-intro__url" type="text" value="https://tokopedia.com" placeholder="let's go to your website page, bro">
       </div>
-      <button id="goto" type="submit" class="btn btn-outline-warning .btn-lg">Let's Go</button>
+      <button type="submit" class="btn btn-outline-warning .btn-lg js-intro__submit">Let's Go</button>
     </div>
-    <webview id="browser" src="#" preload="./preload.js" class="hidden" autosize minwidth="576" minheight="432"></webview>
-    <div id="navigation">
-      <ul style="float:right">
-        <li><a id="close" href="javascript:window.close()">Close Program</a></li>
-      </ul>
+    <webview id="js-browser" src="#" preload="./preload.js" class="browser hidden" autosize minwidth="576" minheight="432"></webview>
+    <div class="bottom-menu">
+      <div class="bottom-menu__left">
+        <a href="#" class="js-bottom-menu__left_history-back"><i class="far fa-arrow-alt-circle-left fac-medium"></i></a>
+        <a href="#" class="js-bottom-menu__left_history-refresh"><i class="fas fa-undo-alt fac-medium"></i></a>
+        <a href="#" class="js-bottom-menu__left_history-forward"><i class="far fa-arrow-alt-circle-right fac-medium"></i></a>
+        <a class="fac-medium bottom-menu__left_inspect js-bottom-menu__left_inspect" href="#">Inspect</a>
+      </div>
+      <div class="bottom-menu__right">
+        <a href="#" class="js-bottom-menu__right_location"></a>
+      </div>
     </div>
-    <script src="./assets/js/jquery-3.2.1.min.js" onload="window.$ = window.jQuery = module.exports;"></script>
+    <script src="./assets/js/jquery-3.3.1.js" onload="window.$ = window.jQuery = module.exports;"></script>
     <script src="./assets/bootstrap/js/bootstrap.bundle.min.js" onload="window.$ = window.bootstrap = module.exports;"></script>
     <script>
       // You can also require other files to run in this process

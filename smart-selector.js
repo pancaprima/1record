@@ -1,7 +1,11 @@
 const XPATH_STRATEGY = "XPATH"
 const CSS_SELECTOR_STRATEGY = "CSS_SELECTOR"
 const SHORTEST_STRATEGY = "SHORTEST"
+var page
 
+function setPage(new_page) {
+  page = new_page
+}
 function findElementLocation(el, strategy) {
   let location
   switch (strategy) {
@@ -50,13 +54,13 @@ function getShortestLocation(el) {
       }
     }
     css.location = css.location.replace(/^[ \t]+|[ \t]+$/, '')
-    let cssNodes = document.querySelectorAll(css.location)
+    let cssNodes = page.querySelectorAll(css.location)
     for (let j=0; j < cssNodes.length; j++) {
       if ( j==0 && el.isSameNode(cssNodes[j]) ) {
           css.minimum_valid = css.location
           break
       } else {
-          let xpathNodes = document.evaluate('/' + xpath.location, document, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null)
+          let xpathNodes = page.evaluate('/' + xpath.location, page, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null)
           let xpathNode = xpathNodes.iterateNext()
           let nodeIteration = 1
           while (xpathNode) {
@@ -94,7 +98,7 @@ function validateElement(el) {
   let currentElement = el
   while ( currentElement ) {
     if (currentElement.nodeName.toLowerCase() == "a") el = currentElement
-    currentElement = currentElement.parentNode !== document ? currentElement.parentNode : false;
+    currentElement = currentElement.parentNode !== page ? currentElement.parentNode : false;
   }
   return el
 }
@@ -136,7 +140,7 @@ function getAllElementLocations(el, strategy) {
     if ( tagId ) break;
     
     // Go up to the next parent node:
-    currentElement = currentElement.parentNode !== document ? currentElement.parentNode : false;
+    currentElement = currentElement.parentNode !== page ? currentElement.parentNode : false;
   } // endwhile
 
   return parentElementLocations
@@ -175,11 +179,11 @@ function checkWithAttributes (el, strategy, tagName, currentLocation, elementSpe
       switch (strategy) {
         case CSS_SELECTOR_STRATEGY:
           attr = attr + "[" + eAttr.name + "=" + "'" + eAttr.value + "'" +"]"
-          if ( el.isSameNode(document.querySelector(tempLocation + attr)) ) finalLocation = tempLocation + attr
+          if ( el.isSameNode(page.querySelector(tempLocation + attr)) ) finalLocation = tempLocation + attr
           break
         case XPATH_STRATEGY:
           attr = attr + "[@" + eAttr.name + "=" + "'" + eAttr.value + "'" +"]"
-          let xpathNode = document.evaluate('//' + tempLocation + attr, document, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null).iterateNext()
+          let xpathNode = page.evaluate('//' + tempLocation + attr, page, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null).iterateNext()
           if (el.isSameNode(xpathNode)) finalLocation = tempLocation + attr
           break
         default:
@@ -191,4 +195,4 @@ function checkWithAttributes (el, strategy, tagName, currentLocation, elementSpe
   return finalLocation
 }
 
-module.exports = { findElementLocation, XPATH_STRATEGY, CSS_SELECTOR_STRATEGY, SHORTEST_STRATEGY }
+module.exports = { setPage, findElementLocation, XPATH_STRATEGY, CSS_SELECTOR_STRATEGY, SHORTEST_STRATEGY }

@@ -21,6 +21,7 @@ function inspectorMouseOver(e) {
 */
 function inspectorMouseOut(e) {
   // Remove outline from element:
+  e.stopImmediatePropagation()
   e.target.style.outline = '';
 }
 
@@ -30,6 +31,7 @@ function inspectorMouseOut(e) {
 */
 function inspectorOnClick(e) {
   e.preventDefault();
+  e.stopImmediatePropagation()
 
   return smartSelector.findElementLocation(e.target, smartSelector.SHORTEST_STRATEGY)
 }
@@ -43,4 +45,8 @@ function inspectorCancel() {
   last.style.outline = 'none'
 }
 
-module.exports = { inspectorMouseOver, inspectorMouseOut, inspectorOnClick, inspectorCancel, inspectorStart};
+function setPage(doc) {
+  smartSelector.setPage(doc)
+}
+
+module.exports = { inspectorMouseOver, inspectorMouseOut, inspectorOnClick, inspectorCancel, setPage };
