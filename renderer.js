@@ -2,7 +2,6 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 const webview = document.getElementById('js-browser');
-const inspectorEvents = require('./inspector_events');
 const { ipcRenderer: ipc, remote, clipboard } = require('electron');
 
 $('.js-intro__submit').on('click', (e) => {
@@ -12,6 +11,14 @@ $('.js-intro__submit').on('click', (e) => {
   
   $('#js-browser').attr('src', $('.js-intro__url').val())
   $('#js-browser').show()
+})
+
+$(".js-bottom-menu__left_new-url").on('click', (e) => {
+  e.preventDefault()
+  $('.js-intro').show()
+  $('nav').hide()
+  $('#js-browser').hide()
+  deactivateInspector()
 })
 
 $('.js-bottom-menu__left_inspect').on('click', (e) => {
@@ -48,13 +55,45 @@ $(".js-bottom-menu__right_location").on('click',(e) => {
   clipboard.writeText($(".js-bottom-menu__right_location").first().text())
 })
 
-window.addEventListener('keydown', function (event) {
+$(".js-bottom-menu__left_history-back").on('click',(e) => {
+  e.preventDefault()
+  webview.goBack()
+})
+
+$(".js-bottom-menu__left_history-refresh").on('click',(e) => {
+  e.preventDefault()
+  webview.reload()
+})
+
+$(".js-bottom-menu__left_history-forward").on('click',(e) => {
+  e.preventDefault()
+  webview.goForward()
+})
+
+window.addEventListener('keydown', (event) => {
   if (event.key == 'Shift') activateInspector()
 }, true)
 
-window.addEventListener('keyup', function (event) {
+window.addEventListener('keyup', (event) => {
   if (event.key === 'Shift') deactivateInspector()
 }, true)
+
+webview.addEventListener('new-window', (event) => {
+  webview.src= event.url
+})
+
+webview.addEventListener('did-start-loading', (event) => {
+  $(".loading").first().removeClass('hidden')
+  window.setTimeout(() => {
+    if(!$(".loading").first().hasClass('hidden')) {
+      $(".loading").first().addClass('hidden')
+    }
+  }, 5000)
+})
+
+webview.addEventListener('did-stop-loading', (event) => {
+  $(".loading").first().addClass('hidden')
+})
 
 function activateInspector() {
   let inspectBtn = $('.js-bottom-menu__left_inspect').first()

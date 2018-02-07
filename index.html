@@ -16,6 +16,12 @@
       </div>
       <button type="submit" class="btn btn-outline-warning .btn-lg js-intro__submit">Let's Go</button>
     </div>
+    <div class="loading hidden">
+      <div class="spinner">
+        <div class="dot1"></div>
+        <div class="dot2"></div>
+      </div>
+    </div>
     <webview id="js-browser" src="#" preload="./preload.js" class="browser hidden" autosize minwidth="576" minheight="432"></webview>
     <div class="bottom-menu">
       <div class="bottom-menu__left">
@@ -23,6 +29,7 @@
         <a href="#" class="js-bottom-menu__left_history-refresh"><i class="fas fa-undo-alt fac-medium"></i></a>
         <a href="#" class="js-bottom-menu__left_history-forward"><i class="far fa-arrow-alt-circle-right fac-medium"></i></a>
         <a class="fac-medium bottom-menu__left_inspect js-bottom-menu__left_inspect" href="#">Inspect</a>
+        <a class="fac-medium bottom-menu__left_new-url js-bottom-menu__left_new-url" href="#">New URL</a>
       </div>
       <div class="bottom-menu__right">
         <a href="#" class="js-bottom-menu__right_location"></a>
