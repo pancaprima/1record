@@ -11,6 +11,7 @@ $('.js-intro__submit').on('click', (e) => {
   
   $('#js-browser').attr('src', $('.js-intro__url').val())
   $('#js-browser').show()
+  // webview.openDevTools()
 })
 
 $(".js-bottom-menu__left_new-url").on('click', (e) => {

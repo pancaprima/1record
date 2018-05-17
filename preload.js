@@ -9,17 +9,15 @@ var iframe = {
 
 function bindListener(event) {
   inspector.setPage(document)
-  document.addEventListener("mouseover", inspectorMouseOver, true);
-  document.addEventListener("mouseout", inspector.inspectorMouseOut, true);
+  document.addEventListener("mouseover", inspectorMouseOver, true)
+  document.addEventListener("mouseout", inspector.inspectorMouseOut, true)
   document.addEventListener('click', inspectorOnClick, true)
-  document.addEventListener("keydown", unbindListener, true);
 }
 
 function unbindListener(event) {
-  document.removeEventListener("mouseover", inspectorMouseOver, true);
-  document.removeEventListener("mouseout", inspector.inspectorMouseOut, true);
-  document.removeEventListener("click", inspectorOnClick, true);
-  document.removeEventListener("keydown", unbindListener, true);
+  document.removeEventListener("mouseover", inspectorMouseOver, true)
+  document.removeEventListener("mouseout", inspector.inspectorMouseOut, true)
+  document.removeEventListener("click", inspectorOnClick, true)
   inspector.inspectorCancel()
 }
 
